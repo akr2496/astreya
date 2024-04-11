@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FaBars, FaSync, FaSearch, FaAngleDown, FaAngleRight } from 'react-icons/fa';
 
@@ -81,6 +81,13 @@ const SidebarComponent = ({ isVisible, onToggle }) => {
     { name: 'Database 4', expanded: false },
     { name: 'Database 5', expanded: false },
   ]);
+  useEffect( () => {
+    fetch('http://localhost:8080/google')
+    .then( res => res.json())
+    .then(data => setDatabases(data))
+    .catch('error while loading datasets')
+  }, []);
+  
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredDatabases = databases.filter(database =>
