@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaBars, FaSync, FaSearch, FaAngleDown, FaAngleRight } from 'react-icons/fa';
-import initialDatabases from './dummy.json';
 
 // Styled components for layout
 const Container = styled.div`
@@ -36,9 +35,16 @@ const RefreshButton = styled.button`
   cursor: pointer;
 `;
 
+const DatabaseProviderDropdown = styled.select`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+`;
+
 const DatabaseList = styled.ul`
   list-style-type: none;
   padding: 0;
+  display: ${props => props.isVisible ? 'block' : 'none'};
 `;
 
 const DatabaseListItem = styled.li`
@@ -57,14 +63,24 @@ const DatabaseItemText = styled.span`
 
 const SearchPanel = styled.div`
   margin-top: 20px;
+  display: ${props => props.isVisible ? 'block' : 'none'};
   input {
+    width: 100%;
+    height: 20px;
     margin-right: 10px;
   }
 `;
 
 // Sidebar component
 const SidebarComponent = ({ isVisible, onToggle }) => {
-  const [databases, setDatabases] = useState(initialDatabases);
+  const [selectedProvider, setSelectedProvider] = useState('');
+  const [databases, setDatabases] = useState([
+    { name: 'Database 1', expanded: false },
+    { name: 'Database 2', expanded: false },
+    { name: 'Database 3', expanded: false },
+    { name: 'Database 4', expanded: false },
+    { name: 'Database 5', expanded: false },
+  ]);
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredDatabases = databases.filter(database =>
@@ -81,36 +97,49 @@ const SidebarComponent = ({ isVisible, onToggle }) => {
     setDatabases(updatedDatabases);
   };
 
+  const handleProviderChange = (e) => {
+    setSelectedProvider(e.target.value);
+    // Logic to fetch databases for the selected provider
+  };
+
   return (
     <SidebarWrapper isVisible={isVisible}>
       <ToggleButton onClick={onToggle}><FaBars /></ToggleButton>
-      <RefreshButton onClick={() => console.log('Refreshing...')}><FaSync /></RefreshButton>
-      <SearchPanel>
-        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleSearchChange} />
-        <FaSearch />
-      </SearchPanel>
-      <DatabaseList>
-        {filteredDatabases.map((database, index) => (
-          <DatabaseListItem key={index}>
-            <DatabaseItemContent onClick={() => toggleExpand(index)}>
-              {database.expanded ? <FaAngleDown /> : <FaAngleRight />}
-              <DatabaseItemText>{database.name}</DatabaseItemText>
-            </DatabaseItemContent>
-            {database.expanded && (
-              <div>
-                {/* Submenu content goes here */
-                <div>
-                    <DatabaseListItem> database.name</DatabaseListItem>
-                    <DatabaseListItem> database.description</DatabaseListItem>
-                </div>
-            }
-
-
-              </div>
-            )}
-          </DatabaseListItem>
-        ))}
-      </DatabaseList>
+      {isVisible && (
+        <>
+          <RefreshButton onClick={() => console.log('Refreshing...')}><FaSync /></RefreshButton>
+          <DatabaseProviderDropdown value={selectedProvider} onChange={handleProviderChange}>
+            <option value="">Select Provider</option>
+            <option value="BigQuery">Google BigQuery</option>
+            <option value="Snowflake">Snowflake</option>
+          </DatabaseProviderDropdown>
+          <h2>{selectedProvider}</h2>
+          {selectedProvider && (
+            <> 
+                <SearchPanel isVisible={isVisible}>
+                    <input type="text" placeholder="Search..." value={searchQuery} onChange={handleSearchChange} />
+                    
+                </SearchPanel>
+                <DatabaseList isVisible={isVisible}>
+                    {filteredDatabases.map((database, index) => (
+                    <DatabaseListItem key={index}>
+                        <DatabaseItemContent onClick={() => toggleExpand(index)}>
+                        {database.expanded ? <FaAngleDown /> : <FaAngleRight />}
+                        <DatabaseItemText>{database.name}</DatabaseItemText>
+                        </DatabaseItemContent>
+                        {database.expanded && (
+                        <div>
+                            {/* Submenu content goes here */}
+                        </div>
+                        )}
+                    </DatabaseListItem>
+                    ))}
+                </DatabaseList>
+            
+            </>
+          )}
+        </>
+      )}
     </SidebarWrapper>
   );
 };
