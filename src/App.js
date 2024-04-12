@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import SidebarComponent from './Sidebar/sidebar'
+import SidebarComponent from './Sidebar/sidebar';
+import EditorComponent from './main-content/Editor/editor';
 // Styled components for layout
 const Container = styled.div`
   display: flex;
@@ -32,12 +33,12 @@ const ToggleButton = styled.button`
 // );
 
 // Editor component
-const EditorComponent = () => (
-  <textarea
-    placeholder="Enter your SQL query here..."
-    style={{ width: '100%', height: '50vh', backgroundColor: '#fff', border: '1px solid #ccc', resize: 'none' }}
-  />
-);
+// const EditorComponent = () => (
+//   <textarea
+//     placeholder="Enter your SQL query here..."
+//     style={{ width: '100%', height: '50vh', backgroundColor: '#fff', border: '1px solid #ccc', resize: 'none' }}
+//   />
+// );
 
 // Result window component
 const ResultWindowComponent = () => (
