@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaPlus, FaAngleRight, FaTimes } from 'react-icons/fa';
-import Worksheet from './Worksheet/worksheet';
-
+import Worksheet from './worksheet/worksheet';
+import Dropdown from '../utility-feature/dropdown/dropdown';
 // Styled components for layout
 const EditorContainer = styled.div`
   width: 100%;
