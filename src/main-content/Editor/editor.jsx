@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaPlus, FaAngleRight, FaTimes } from 'react-icons/fa';
+import Worksheet from './Worksheet/worksheet';
 
 // Styled components for layout
 const EditorContainer = styled.div`
@@ -41,7 +42,7 @@ const ActionButton = styled.button`
 `;
 
 const DropdownContent = styled.div`
-  position: relative;
+  position: absolute;
   background-color: #555;
   min-width: 160px;
   z-index: 2; /* Ensure the dropdown is above the worksheet container */
@@ -65,25 +66,6 @@ const DropdownOption = styled.div`
   cursor: pointer;
 `;
 
-const WorksheetContainer = styled.div`
-  height: calc(100% - 40px); /* Subtracting the height of the navigation bar */
-  overflow-y: auto;
-  position: relative; /* Position relative for absolute positioning */
-  z-index: 0; /* Set z-index lower than dropdown content */
-`;
-
-const Worksheet = styled.textarea`
-  width: 100%;
-  height: 100%;
-  border: none;
-  padding: 10px;
-  resize: none;
-  font-family: 'Arial', sans-serif;
-  font-size: 16px;
-  position: relative; /* Position relative for absolute positioning */
-  z-index: 0; /* Set z-index lower than dropdown content */
-`;
-
 // Editor component
 const EditorComponent = () => {
   const [worksheets, setWorksheets] = useState([]);
@@ -103,7 +85,7 @@ const EditorComponent = () => {
     setActiveWorksheet(newWorksheetId);
     setLastCreatedWorksheet(newWorksheetId);
   };
-
+  
   const handleCloseWorksheet = (id) => {
     const updatedWorksheets = worksheets.filter(worksheet => worksheet.id !== id);
     setWorksheets(updatedWorksheets);
@@ -112,11 +94,17 @@ const EditorComponent = () => {
     }
   };
 
-  const handleChangeContent = (e) => {
+  const handleChangeContent = (e, id) => {
     const updatedWorksheets = [...worksheets];
-    updatedWorksheets.find(worksheet => worksheet.id === activeWorksheet).content = e.target.value;
-    setWorksheets(updatedWorksheets);
+    const worksheetToUpdate = updatedWorksheets.find(worksheet => worksheet.id === id);
+    if (worksheetToUpdate) {
+      worksheetToUpdate.content = e.target.value;
+      setWorksheets(updatedWorksheets);
+    } else {
+      console.error(`Worksheet with id ${id} not found.`);
+    }
   };
+  
 
   const switchWorksheet = (id) => {
     setActiveWorksheet(id);
@@ -150,13 +138,10 @@ const EditorComponent = () => {
           ))}
         </TabContainer>
       </NavigationBar>
-      <WorksheetContainer>
-        <Worksheet
-          value={activeWorksheetContent}
-          onChange={handleChangeContent}
-          placeholder="Write your SQL queries here..."
-        />
-      </WorksheetContainer>
+      <Worksheet
+        content={activeWorksheetContent}
+        onChange={(e) => handleChangeContent(e, activeWorksheet)}
+      />
     </EditorContainer>
   );
 };
