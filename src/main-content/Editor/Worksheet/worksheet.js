@@ -2,7 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import styled,  { keyframes }  from 'styled-components';
 import Dropdown from '../../utility-feature/dropdown/dropdown';
 import { FaPlay, FaCopy, FaDownload, FaDatabase } from 'react-icons/fa';
-import { useResultData } from './../../../context/context';
+import { useResultData, useQueryDetailsData } from './../../../context/context';
 
 // Styled components for layout
 const WorksheetContainer = styled.div`
@@ -88,7 +88,9 @@ const Worksheet = ({ content, onChange }) => {
   const [databases, setDatabases] = useState([]);
   const [schemas, setSchemas] = useState([]);
   const [queryResult, setQueryResult ] = useState([]);
-  const { setResultData } = useResultData()
+  const { setResultData } = useResultData();
+  const { setQueryDetailsData } = useQueryDetailsData();
+  const [allotedQueryID, setAllotedQueryID] = useState(1);
 
   useEffect(() => {
     // Fetch databases when component mounts
@@ -97,9 +99,6 @@ const Worksheet = ({ content, onChange }) => {
 
   const fetchDatabases = async () => {
     try {
-      // Fetch databases from API
-    //   const response = await fetch('your_api_endpoint_for_databases');
-    //   const data = await response.json();
       const data = ['db1', 'db2', "db3", "db4", "db5", "db6", "db7"];
       setDatabases(data);
     } catch (error) {
@@ -109,7 +108,6 @@ const Worksheet = ({ content, onChange }) => {
 
   const fetchSchemas = async (database) => {
     try {
-      // Fetch schemas based on selected database from API
       const response = await fetch(`your_api_endpoint_for_schemas?database=${database}`);
       const data = await response.json();
       setSchemas(data);
@@ -118,7 +116,22 @@ const Worksheet = ({ content, onChange }) => {
     }
   };
 
+  const updateQueryDetails = (status = 'pending', duration = null, start = null, queryId = null, SQL = null ) => {
+    const updatedQueryDetails = {
+        status : status,
+        duration : `${duration} ms`,
+        start : `${start}`,
+        queryId : queryId,
+        SQL : SQL
+    }
+    setQueryDetailsData(updatedQueryDetails);
+  }
+
   const handleRun = () => {
+    const startDate = new Date();
+    updateQueryDetails('pending', null, startDate,  allotedQueryID, content);
+    const starttime = performance.now();
+
     setProcessing(true);
     const endpoint = 'http://localhost:8080/google/run';
     // Send a POST request to the server
@@ -139,13 +152,18 @@ const Worksheet = ({ content, onChange }) => {
     .then(data => {
         console.log(data);
         setResultData(data);
+        const endtime = performance.now();
+        updateQueryDetails('Done', endtime - starttime, startDate, allotedQueryID, content);
+
         setProcessing(false);
     })
     .catch(error => {
       // Handle error
+      updateQueryDetails('Failed - Error', null, startDate, allotedQueryID, content);
       console.error('Error executing SQL queries:', error);
       setProcessing(false);
     });
+    setAllotedQueryID(allotedQueryID+1)
   };
 
   const handleDatabaseChange = (e) => {

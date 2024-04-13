@@ -13,7 +13,7 @@ const ResultTable = styled.table`
 
 const TableHeader = styled.th`
   border: none;
-  padding: 12px 16px;
+  padding: 6px 8px;
   text-align: left;
   background-color: #f8f8f8;
   font-size: 14px;
@@ -23,24 +23,30 @@ const TableHeader = styled.th`
 
 const TableRow = styled.tr`
   &:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #f9f9f9;
   }
 `;
 
 const TableCell = styled.td`
   border: none;
-  padding: 12px 16px;
+  padding: 6px 8px;
   font-size: 14px;
   color: #666;
 `;
 
+const NoResultData = styled.p`
+  padding: 16px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #999;
+`;
 
 const QueryResultTable = ({ resultData }) => {
-    // console.log('in table',resultData)
+    console.log('in table',resultData)
     // const fields = ['f1', 'f2', 'f3', 'f4'];
     const fields = resultData?.fields ? resultData.fields : [];
     const queryResult = resultData?.rows ? resultData.rows : [];
-
+    
     // const queryResult = [
     // {f1: 'asd', f2: 'fsdf', f3: 'aefsd', f4: 'sfsdf'},
     // {f1: 'asd', f2: 'fsdf', f3: 'aefsd', f4: 'sfsdf'},
