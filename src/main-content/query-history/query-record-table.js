@@ -23,16 +23,13 @@ const TableRow = styled.tr`
   &:nth-child(even) {
     background-color: #f9f9f9;
   }
-`;
+  `;
 
 const TableCell = styled.td`
-  padding: 16px;
-  border-bottom: 1px solid #ddd;
-  transition: background-color 0.3s ease;
-
-  /**  &:hover {
-    background-color: #f0f0f0; /* Light background color on hover */
-  /* }  */
+  border: none;
+  padding: 6px 8px;
+  font-size: 14px;
+  color: #666;
 `;
 
 const NoHistoryMessage = styled.p`
@@ -42,12 +39,34 @@ const NoHistoryMessage = styled.p`
   color: #999;
 `;
 
-const QueryRecordsTable = ({ queryRecords }) => {
+const getStatusColor = (status) => {
+    switch (status) {
+      case 'Pending':
+        return '#ffffcc'; // Light yellow
+      case 'Done':
+        return '#ccffcc'; // Light green
+      case 'Failed':
+        return '#ffcccc'; // Light red
+      default:
+        return 'inherit';
+    }
+  };
+
+  const handleRowHeight = (viewOption) => {
+    let rowHeight = 'auto';
+    if (viewOption === 'Column') {
+      rowHeight = '15px'; // Set desired height for "Column" view
+    }
+    return rowHeight;
+  };  
+
+const QueryRecordsTable = ({ queryRecords, viewOption }) => {
+  console.log(viewOption)
   return (
-    queryRecords.length > 1 ? (
+    queryRecords.length > 0 ? (
       <ResultTable>
         <thead>
-          <TableRow>
+          <TableRow style={{ height:handleRowHeight(viewOption)}}> 
             <TableHeader>Status</TableHeader>
             <TableHeader>Duration</TableHeader>
             <TableHeader>Start Time</TableHeader>
@@ -57,7 +76,8 @@ const QueryRecordsTable = ({ queryRecords }) => {
         </thead>
         <tbody>
           {queryRecords.map((record, index) => (
-            record && (<TableRow key={index}>
+            record && (
+              <TableRow key={index} style={{ height:handleRowHeight(viewOption) , backgroundColor: getStatusColor(record.status) }}>
               <TableCell>{record.status}</TableCell>
               <TableCell>{record.duration}</TableCell>
               <TableCell>{record.start}</TableCell>

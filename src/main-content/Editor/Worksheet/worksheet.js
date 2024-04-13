@@ -5,16 +5,9 @@ import { FaPlay, FaCopy, FaDownload, FaDatabase } from 'react-icons/fa';
 import { useResultData, useQueryDetailsData } from './../../../context/context';
 
 // Styled components for layout
-const WorksheetContainer = styled.div`
-  height: calc(100% - 40px); /* Subtracting the height of the info bar */
-  overflow-y: auto;
-  position: relative; /* Position relative for absolute positioning */
-  z-index: 0; /* Set z-index lower than dropdown content */
-`;
-
 const WorksheetTextarea = styled.textarea`
   width: 100%;
-  height: calc(100% - 40px); /* Subtracting the height of the info bar */
+  height: 100%;
   border: none;
   padding: 10px;
   resize: none;
@@ -22,29 +15,34 @@ const WorksheetTextarea = styled.textarea`
   font-size: 16px;
   position: relative; /* Position relative for absolute positioning */
   z-index: 0; /* Set z-index lower than dropdown content */
+  background-color: transparent; /* Transparent background */
+  color: #333; /* Text color */
+  border-radius: 5px; /* Rounded corners */
+  border: 1px solid #ddd; /* Border */
 `;
 
 const InfoBarContainer = styled.div`
   background-color: #eee;
-  padding: 5px;
+  padding: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-top-left-radius: 10px; /* Match border radius of worksheet container */
+  border-top-right-radius: 10px; /* Match border radius of worksheet container */
 `;
 
 const Button = styled.button`
-  background-color: #555;
+  background-color: #007bff; /* Blue button color */
   color: white;
   border: none;
   cursor: pointer;
-  padding: 7px 10px;
+  padding: 10px 15px;
   margin-right: 10px;
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition on hover */
 
   &:hover {
-    background-color: #d777; /* Change the background color on hover */
-  }
-  &:active {
-    filter: brightness(1.8); /* Reduce the brightness to indicate the button is clicked */
+    background-color: #0056b3; /* Darker blue on hover */
   }
 `;
 
@@ -54,7 +52,6 @@ const Context = styled.div`
 
 const DatabaseProviderDropdown = styled.select`
   position: relative;
-  
 `;
 
 const spin = keyframes`
@@ -259,16 +256,16 @@ const Worksheet = ({ content, onChange }) => {
               )}
         </Context>
 
-        <Dropdown buttonContent="More Options" items={['Item 1', 'Item 2', 'Item 3']} />
+        <Dropdown buttonContent="..." items={['Item 1', 'Item 2', 'Item 3']} />
       </InfoBarContainer>
 
-      <WorksheetContainer>
+      
         <WorksheetTextarea
           value={content}
           onChange={onChange}
           placeholder="Write your SQL queries here..."
         />
-      </WorksheetContainer>
+      
     </Fragment>
   );
 };

@@ -9,15 +9,18 @@ import QueryRecordsTable from './query-record-table';
 // Styled components for layout
 const HistoryContainer = styled.div`
   flex: 7;
-  height: calc(60vh - 5px);
-  background-color: #d0d0d0;
+  height: calc(55vh - 5px);
+  background-color: #f5f5f5; 
   overflow-y: auto;
+  box-sizing: border-box;
+  border: 2px solid #ddd; /* Add border with light gray color */
+  border-radius: 10px; /* Add border radius for rounded corners */
 `;
 
 const HeaderBar = styled.div`
-  background-color: rgba(90, 123, 4, 0.5);; /* White background for navigation bar */
-  padding: 11px; /* Increased padding for better spacing */
+background-color: rgba(0, 166, 255, 0.9); /* Oceanic blue with opacity */  padding: 11px; /* Increased padding for better spacing */
   display: flex;
+  padding: 8px; /* Increased padding for better spacing */
   align-items: center;
   justify-content: space-between;
   position: sticky;
@@ -34,7 +37,7 @@ const QueryTableContainer = styled.div`
   overflow: auto;
 `;
 
-const HeaderTitle = styled.h3`
+const HeaderTitle = styled.h4`
   margin: 0;
   margin-right: auto;
 `;
@@ -89,7 +92,7 @@ const QueryHistoryComponent = () => {
   const [viewOption, setViewOption] = useState('Column'); // Initial view option
   const { queryDetailsData }  = useQueryDetailsData(); 
   const [queryRecords, setQueryRecords] = useState([]);
-
+  
   console.log('queryDetailsData:', queryDetailsData)
   console.log('queryRecords:',queryRecords)
   useEffect(() => {
@@ -97,7 +100,7 @@ const QueryHistoryComponent = () => {
     const recordIndex = queryRecords.findIndex(record => record && record.queryId === queryDetailsData.queryId);
 
     // Concatenate the new queryDetailsData with the existing queryRecords array
-    let updatedQueryRecords;
+    let updatedQueryRecords = queryRecords;
     if (recordIndex !== -1) {
         // If the record exists, remove it from the array before concatenating
         updatedQueryRecords = [
@@ -107,7 +110,7 @@ const QueryHistoryComponent = () => {
         ];
     } else {
         // If the record doesn't exist, concatenate it with the existing array
-        updatedQueryRecords = [queryDetailsData, ...queryRecords];
+        if(queryDetailsData) updatedQueryRecords = [queryDetailsData, ...queryRecords];
     }
 
     // Limit the number of records to 100
@@ -141,7 +144,7 @@ const QueryHistoryComponent = () => {
         </Dropdown>
       </HeaderBar>
       <QueryTableContainer>
-        <QueryRecordsTable queryRecords = {queryRecords}/>
+        <QueryRecordsTable queryRecords = {queryRecords} viewOption = {viewOption}/>
       </QueryTableContainer>
     </HistoryContainer>
   );
