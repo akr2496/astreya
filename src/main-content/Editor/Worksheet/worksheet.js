@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import styled,  { keyframes }  from 'styled-components';
 import Dropdown from '../../utility-feature/dropdown/dropdown';
 import { FaPlay, FaCopy, FaDownload, FaDatabase } from 'react-icons/fa';
-
+import { useResultData } from './../../../context/context';
 
 // Styled components for layout
 const WorksheetContainer = styled.div`
@@ -87,6 +87,8 @@ const Worksheet = ({ content, onChange }) => {
   const [selectedSchema, setSelectedSchema] = useState('');
   const [databases, setDatabases] = useState([]);
   const [schemas, setSchemas] = useState([]);
+  const [queryResult, setQueryResult ] = useState([]);
+  const { setResultData } = useResultData()
 
   useEffect(() => {
     // Fetch databases when component mounts
@@ -136,6 +138,7 @@ const Worksheet = ({ content, onChange }) => {
     })
     .then(data => {
         console.log(data);
+        setResultData(data);
         setProcessing(false);
     })
     .catch(error => {
@@ -193,7 +196,7 @@ const Worksheet = ({ content, onChange }) => {
   const items = ['Item 1', 'Item 2', 'Item 3'];
 
   return (
-    <>
+    <Fragment>
       <InfoBarContainer>
         <Button onClick={handleRun}>
             {processing && <LoadingSpinner />}
@@ -220,7 +223,7 @@ const Worksheet = ({ content, onChange }) => {
             </DatabaseProviderDropdown>
 
             {selectedProvider === 'Snowflake' && (
-                <>
+                <Fragment>
                   <DatabaseProviderDropdown value={selectedDatabase} onChange={handleDatabaseChange}>
                     <option value="">Select Database</option>
                     {databases.map(database => (
@@ -234,7 +237,7 @@ const Worksheet = ({ content, onChange }) => {
                       <option key={schema.id} value={schema.id}>{schema.name}</option>
                     ))}
                   </DatabaseSchemaDropdown>
-                </>
+                </Fragment>
               )}
         </Context>
 
@@ -248,7 +251,7 @@ const Worksheet = ({ content, onChange }) => {
           placeholder="Write your SQL queries here..."
         />
       </WorksheetContainer>
-    </>
+    </Fragment>
   );
 };
 

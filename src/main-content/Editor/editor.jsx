@@ -8,6 +8,7 @@ const EditorContainer = styled.div`
   width: 100%;
   height: 60%;
   position: relative; /* Position relative for dropdown positioning */
+  overflow: hidden;
 `;
 
 const NavigationBar = styled.div`
