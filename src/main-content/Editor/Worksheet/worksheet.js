@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useRef } from 'react';
 import styled,  { keyframes }  from 'styled-components';
 import Dropdown from '../../utility-feature/dropdown/dropdown';
 import { FaPlay, FaCopy, FaDownload, FaDatabase } from 'react-icons/fa';
@@ -92,6 +92,7 @@ const Worksheet = ({ content, onChange }) => {
   const { setQueryDetailsData } = useQueryDetailsData();
   const [allotedQueryID, setAllotedQueryID] = useState(1);
   const [snowflakeLogisticInfo, setSnowflakeLogisticInfo] = useState({});
+  const textareaRef = useRef(null);
 
   const executeRequest = async (url, bodyContent) => {
     // console.log('in executeRequest')
@@ -156,7 +157,20 @@ const Worksheet = ({ content, onChange }) => {
     const starttime = performance.now();
 
     setProcessing(true);
-    const endpoint = 'http://localhost:8080/google/run';
+    let endpoint = '';
+
+    switch(selectedProvider){
+      case 'BigQuery':
+        endpoint = 'http://localhost:8080/google/run';
+        break;
+
+      case 'Snowflake':
+        endpoint = 'http://localhost:8080/snowflake/run';
+        break;
+
+      default :
+
+    }
     // Send a POST request to the server
     fetch(endpoint, {
       method: 'POST',
@@ -313,7 +327,7 @@ const Worksheet = ({ content, onChange }) => {
       </InfoBarContainer>
 
       
-        <WorksheetTextarea
+        <WorksheetTextarea ref = {textareaRef}
           value={content}
           onChange={onChange}
           placeholder="Write your SQL queries here..."

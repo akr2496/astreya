@@ -60,9 +60,10 @@ const QueryResultTable = ({ resultData }) => {
                 {queryResult.map((row, rowIndex) => (
                     <TableRow key={rowIndex}>
                     <TableCell>{rowIndex + 1}</TableCell> {/* Row number */}
-                    {fields.map((field, cellIndex) => (
+                    {fields.map((field, cellIndex) => {return row[field] && typeof row[field] !== 'object' &&(
                         <TableCell key={cellIndex}>{row[field]}</TableCell>
-                    ))}
+                    )}
+                    )}
                     </TableRow>
                 ))}
             </tbody>
