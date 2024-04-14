@@ -7,15 +7,19 @@ import { useResultData } from './../../context/context';
 // Styled components for layout
 const ResultWindowContainer = styled.div`
   flex: 13;
-  height: calc(60vh - 5px); /* Subtracting the height of the navigation bar and padding */
+  height: calc(55vh - 5px); /* Subtracting the height of the navigation bar and padding */
   background-color: #f5f5f5; /* Lighter shade for background */
   overflow-y: auto;
   position: relative;
+  box-sizing: border-box;
+  border: 2px solid #ddd; /* Add border with light gray color */
+  border-radius: 10px; /* Add border radius for rounded corners */
+  
 `;
 
 const NavigationBar = styled.div`
-  background-color: rgba(90, 123, 4, 0.5);; /* White background for navigation bar */
-  padding: 10px; /* Increased padding for better spacing */
+  background-color: rgba(0, 166, 255, 0.9); /* White background for navigation bar */
+  padding: 5px; /* Increased padding for better spacing */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -33,9 +37,8 @@ const QueryTableContainer = styled.div`
   overflow: auto;
 `;
 
-const WindowName = styled.h3`
+const WindowName = styled.h4`
   margin: 0;
-  font-size: 18px; /* Larger font size for window name */
   color: #333333; /* Darker text color */
 `;
 

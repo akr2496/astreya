@@ -1,4 +1,4 @@
-import React  from "react";
+import React from "react";
 import styled from "styled-components";
 
 const DropdownContainer = styled.div`
@@ -7,40 +7,50 @@ const DropdownContainer = styled.div`
 `;
 
 const DropdownButton = styled.button`
-  background-color: #4caf50;
-  color: white;
-  padding: 5px;
-  font-size: 16px;
-  border: none;
+  background-color: transparent;
+  color: #333;
+  padding: 4px 8px;
+  font-size: 20px;
+  text-align: justify;
+  border: 2px solid #ddd;
+  border-radius: 10px;
   cursor: pointer;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #4caf50; /* Green on hover */
+  }
 `;
 
 const DropdownContent = styled.div`
   display: none;
+  font-size: 15px;
   position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  background-color: #fff;
+  min-width: 80px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 1;
   ${DropdownContainer}:hover & {
     display: block;
+    right: calc(100% - 30px); /* Position content on the left side */
   }
 `;
 
 const DropdownItem = styled.div`
-  color: black;
+  color: #333;
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+  transition: background-color 0.3s ease;
+
   &:hover {
-    background-color: #f1f1f1;
+    background-color: #f9f9f9; /* Light gray on hover */
   }
 `;
 
 const Dropdown = ({ buttonContent, items }) => {
   return (
     <DropdownContainer>
-    
       <DropdownButton>{buttonContent}</DropdownButton>
       <DropdownContent>
         {items.map((item, index) => (

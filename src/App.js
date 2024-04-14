@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import SidebarComponent from './Sidebar/sidebar';
 import EditorComponent from './main-content/Editor/editor';
 import ResultWindowComponent from './main-content/result-display/result-display';
-import { ResultDataProvider } from './context/context';
-
+import { ResultDataProvider, QueryDetailsDataProvider } from './context/context';
+import QueryHistoryComponent from './main-content/query-history/query-history';
 // Styled components for layout
 const Container = styled.div`
   display: flex;
@@ -26,14 +26,6 @@ const MainContent = styled.div`
 const ToggleButton = styled.button`
   margin-bottom: 10px;
 `;
-
-// Query history component
-const QueryHistoryComponent = () => (
-  <div style={{ flex: 7, backgroundColor: '#d0d0d0', overflowY: 'auto' }}>
-    <h2>Query History</h2>
-    {/* Query history content goes here */}
-  </div>
-);
 
 // Main component
 const App = () => {
@@ -58,6 +50,7 @@ const App = () => {
         {/* Toggle Sidebar Button */}
 
         {/* Editor */}
+        <QueryDetailsDataProvider>
         <ResultDataProvider>
           <EditorComponent />
           {/* Other components */}
@@ -69,6 +62,7 @@ const App = () => {
             
           </div>
         </ResultDataProvider>
+        </QueryDetailsDataProvider>
       </MainContent>
     </Container>
   );

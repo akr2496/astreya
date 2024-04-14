@@ -3,12 +3,24 @@ import styled from 'styled-components';
 import { FaPlus, FaAngleRight, FaTimes } from 'react-icons/fa';
 import Worksheet from './worksheet/worksheet';
 import Dropdown from '../utility-feature/dropdown/dropdown';
+
 // Styled components for layout
 const EditorContainer = styled.div`
   width: 100%;
   height: 60%;
-  position: relative; /* Position relative for dropdown positioning */
+  position: relative;
+  /* overflow: hidden; */
+  background-color: #f5f5f5; /* Light gray background color */
+`;
+
+const WorksheetContainer = styled.div`
+  width: 100%;
+  height: 87%;
+  background-color: #f5f5f5; /* Light gray background color */
   overflow: hidden;
+  box-sizing: border-box;
+  border: 2px solid #ddd; /* Add border with light gray color */
+  border-radius: 10px; /* Add border radius for rounded corners */
 `;
 
 const NavigationBar = styled.div`
@@ -18,8 +30,7 @@ const NavigationBar = styled.div`
   display: flex;
   align-items: center;
   overflow-x: auto;
-  position: relative; /* Position relative for dropdown positioning */
-  z-index: 1; /* Ensure the navbar is above the worksheet container */
+  overflow-y: hidden;
 `;
 
 const TabContainer = styled.div`
@@ -27,35 +38,41 @@ const TabContainer = styled.div`
 `;
 
 const Tab = styled.button`
-  background-color: ${(props) => (props.active ? '#4a90e2' : '#222')}; /* Light blue for active worksheet tab, dark for inactive */
+  background-color: ${(props) => (props.active ? '#4a90e2' : '#222')};
   border: none;
   cursor: pointer;
   color: white;
   margin-right: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
 `;
 
 const ActionButton = styled.button`
-  background-color: #555; /* Darker color for action buttons */
+  background-color: #555;
   border: none;
   cursor: pointer;
   color: white;
   margin-right: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
 `;
 
 const DropdownContent = styled.div`
   position: absolute;
   background-color: #555;
   min-width: 160px;
-  z-index: 2; /* Ensure the dropdown is above the worksheet container */
-  right: 0; /* Position the dropdown content to the right of the EditorContainer */
-  top: calc(100% + 10px); /* Position the dropdown content below the navbar */
-  display: none; /* Hide the dropdown content by default */
+  z-index: 2;
+  right: 0;
+  top: calc(100% + 10px);
+  display: none;
 `;
 
 const DropdownButton = styled(ActionButton)`
   position: relative;
   &:hover ${DropdownContent} {
-    display: block; /* Show dropdown content on hover */
+    display: block;
   }
 `;
 
@@ -139,10 +156,12 @@ const EditorComponent = () => {
           ))}
         </TabContainer>
       </NavigationBar>
+      <WorksheetContainer>
       <Worksheet
         content={activeWorksheetContent}
         onChange={(e) => handleChangeContent(e, activeWorksheet)}
       />
+      </WorksheetContainer>
     </EditorContainer>
   );
 };
