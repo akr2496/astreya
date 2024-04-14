@@ -113,13 +113,14 @@ const Worksheet = ({ content, onChange }) => {
     }
   };
 
-  const updateQueryDetails = (status = 'pending', duration = null, start = null, queryId = null, SQL = null ) => {
+  const updateQueryDetails = (status = 'pending', duration = null, start = null, queryId = null, SQL = null, provider = null ) => {
     const updatedQueryDetails = {
         status : status,
         duration : `${duration} ms`,
         start : `${start}`,
         queryId : queryId,
-        SQL : SQL
+        SQL : SQL,
+        provider : provider
     }
     setQueryDetailsData(updatedQueryDetails);
   }
@@ -150,13 +151,13 @@ const Worksheet = ({ content, onChange }) => {
         console.log(data);
         setResultData(data);
         const endtime = performance.now();
-        updateQueryDetails('Done', endtime - starttime, startDate, allotedQueryID, content);
+        updateQueryDetails('Done', endtime - starttime, startDate, allotedQueryID, content, selectedProvider);
 
         setProcessing(false);
     })
     .catch(error => {
       // Handle error
-      updateQueryDetails('Failed - Error', null, startDate, allotedQueryID, content);
+      updateQueryDetails('Failed - Error', null, startDate, allotedQueryID, content, selectedProvider);
       console.error('Error executing SQL queries:', error);
       setProcessing(false);
     });

@@ -72,6 +72,7 @@ const QueryRecordsTable = ({ queryRecords, viewOption }) => {
             <TableHeader>Start Time</TableHeader>
             <TableHeader>Query ID</TableHeader>
             <TableHeader>SQL</TableHeader>
+            <TableHeader>Provider</TableHeader>
           </TableRow>
         </thead>
         <tbody>
@@ -83,6 +84,7 @@ const QueryRecordsTable = ({ queryRecords, viewOption }) => {
               <TableCell>{record.start}</TableCell>
               <TableCell>{record.queryId}</TableCell>
               <TableCell>{record.SQL}</TableCell>
+              <TableCell>{record.provider}</TableCell>
             </TableRow>
           )
           ))}
