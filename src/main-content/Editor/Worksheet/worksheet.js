@@ -3,6 +3,7 @@ import styled,  { keyframes }  from 'styled-components';
 import Dropdown from '../../utility-feature/dropdown/dropdown';
 import { FaPlay, FaCopy, FaDownload, FaDatabase } from 'react-icons/fa';
 import { useResultData, useQueryDetailsData } from './../../../context/context';
+import axios from 'axios';
 
 // Styled components for layout
 const WorksheetTextarea = styled.textarea`
@@ -84,34 +85,58 @@ const Worksheet = ({ content, onChange }) => {
   const [selectedSchema, setSelectedSchema] = useState('');
   const [databases, setDatabases] = useState([]);
   const [schemas, setSchemas] = useState([]);
+  const [selectedRole, setSelectedRole] = useState([]);
+  const [selectedWarehouse, setSelectedWarehouse] = useState([]);
   const [queryResult, setQueryResult ] = useState([]);
   const { setResultData } = useResultData();
   const { setQueryDetailsData } = useQueryDetailsData();
   const [allotedQueryID, setAllotedQueryID] = useState(1);
+  const [snowflakeLogisticInfo, setSnowflakeLogisticInfo] = useState({});
 
-  useEffect(() => {
-    // Fetch databases when component mounts
-    fetchDatabases();
-  }, []);
+  const executeRequest = async (url, bodyContent) => {
+    // console.log('in executeRequest')
+    try {
+      const response = await axios.get(url, {params: {sqlQuery : bodyContent}});
+      console.log(response.data);
+      return response.data
+    } catch( error) {
+      console.error(`error has occured in executeRequest: ${error}`)
+    }
+  };
 
   const fetchDatabases = async () => {
+    // console.log('in fetchDatabases')
     try {
-      const data = ['db1', 'db2', "db3", "db4", "db5", "db6", "db7"];
+      const query = `SHOW DATABASES`;
+      const data = await executeRequest('http://localhost:8080/snowflake/list', query);
+      // console.log('in worksheet fetching databases',data)
       setDatabases(data);
     } catch (error) {
       console.error('Error fetching databases:', error);
     }
   };
 
-  const fetchSchemas = async (database) => {
+  const fetchSchemas = async () => {
     try {
-      const response = await fetch(`your_api_endpoint_for_schemas?database=${database}`);
-      const data = await response.json();
+      const query = `SHOW SCHEMAS IN DATABASE ${selectedDatabase}`
+      const data = await executeRequest('http://localhost:8080/snowflake/list', query);
       setSchemas(data);
     } catch (error) {
       console.error('Error fetching schemas:', error);
     }
   };
+
+  const fetchLogisticInfo = async () => {
+    try {
+      const query = `SHOW WAREHOUSES # SHOW ROLES`
+      const data = await executeRequest('http://localhost:8080/snowflake/info', query);
+      console.log("data",data);
+      setSnowflakeLogisticInfo(data);
+      console.log('snowflakeLogisticInfo',snowflakeLogisticInfo)
+    } catch (error) {
+      console.error('Error fetching schemas:', error);
+    }
+  }
 
   const updateQueryDetails = (status = 'pending', duration = null, start = null, queryId = null, SQL = null, provider = null ) => {
     const updatedQueryDetails = {
@@ -177,6 +202,15 @@ const Worksheet = ({ content, onChange }) => {
     setSelectedSchema(selectedSchema);
   };
   
+  const handleRoleChange = (e) => {
+    const selectedRole = e.target.value;
+    setSelectedRole(selectedRole);
+  };
+
+  const handleWarehouseChange = (e) => {
+    const selectedWarehouse = e.target.value;
+    setSelectedWarehouse(selectedWarehouse);
+  };
 
   const handleSelectAll = () => {
     // Logic to select all queries
@@ -206,6 +240,10 @@ const Worksheet = ({ content, onChange }) => {
 
   const handleProviderChange = (e) => {
     setSelectedProvider(e.target.value);
+    if(e.target.value === 'Snowflake'){
+      fetchDatabases();
+      fetchLogisticInfo();
+    } 
     // Logic to fetch databases for the selected provider
   };
 
@@ -231,26 +269,40 @@ const Worksheet = ({ content, onChange }) => {
             <FaDownload />
         </Button>
         <Context>
-            **CONTEXT**
+           
             <DatabaseProviderDropdown value={selectedProvider} onChange={handleProviderChange}>
                 <option value="">Select Provider</option>
-                <option value="BigQuery">Google BigQuery</option>
+                <option value="BigQuery" >Google BigQuery</option>
                 <option value="Snowflake">Snowflake</option>
             </DatabaseProviderDropdown>
 
             {selectedProvider === 'Snowflake' && (
                 <Fragment>
                   <DatabaseProviderDropdown value={selectedDatabase} onChange={handleDatabaseChange}>
-                    <option value="">Select Database</option>
+                    <option value="" disabled>Select Database</option>
                     {databases.map(database => (
                       <option key={database.id} value={database.id}>{database.name}</option>
                     ))}
                   </DatabaseProviderDropdown>
         
                   <DatabaseSchemaDropdown value={selectedSchema} onChange={handleSchemaChange}>
-                    <option value="">Select Schema</option>
+                    <option value="" disabled>Select Schema</option>
                     {schemas.map(schema => (
                       <option key={schema.id} value={schema.id}>{schema.name}</option>
+                    ))}
+                  </DatabaseSchemaDropdown>
+
+                  <DatabaseSchemaDropdown value={selectedRole} onChange={handleRoleChange}>
+                    <option value="" disabled>Select Role</option>
+                    {snowflakeLogisticInfo && snowflakeLogisticInfo.roleInfo && snowflakeLogisticInfo.roleInfo.map(role => (
+                      <option key={role.id} value={role.id}>{role.name}</option>
+                    ))}
+                  </DatabaseSchemaDropdown>
+
+                  <DatabaseSchemaDropdown value={selectedWarehouse} onChange={handleWarehouseChange}>
+                    <option value="" disabled>Select Warehouse</option>
+                    {snowflakeLogisticInfo && snowflakeLogisticInfo.warehouseInfo && snowflakeLogisticInfo.warehouseInfo.map(warehouse => (
+                      <option key={warehouse.id} value={warehouse.id}>{warehouse.name +' - ' + warehouse.size} </option>
                     ))}
                   </DatabaseSchemaDropdown>
                 </Fragment>
