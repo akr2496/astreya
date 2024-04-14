@@ -117,9 +117,10 @@ const Worksheet = ({ content, onChange }) => {
     }
   };
 
-  const fetchSchemas = async () => {
+  const fetchSchemas = async (database) => {
     try {
-      const query = `SHOW SCHEMAS IN DATABASE ${selectedDatabase}`
+      console.log('fetchSchemas', database)
+      const query = `SHOW SCHEMAS IN DATABASE ${database}`
       const data = await executeRequest('http://localhost:8080/snowflake/list', query);
       setSchemas(data);
     } catch (error) {
@@ -203,12 +204,13 @@ const Worksheet = ({ content, onChange }) => {
     setAllotedQueryID(allotedQueryID+1)
   };
 
-  const handleDatabaseChange = (e) => {
-    const selectedDatabase = e.target.value;
-    setSelectedDatabase(selectedDatabase);
-    setSelectedSchema(''); // Reset selected schema when database changes
+  const handleDatabaseChange = async(e) => {
+    const selectedDatabase1 = e.target.value;
+    console.log( selectedDatabase1)
+    await setSelectedDatabase(selectedDatabase1);
+    // setSelectedSchema([]); // Reset selected schema when database changes
     // Fetch schemas for the selected database
-    fetchSchemas(selectedDatabase);
+    await fetchSchemas(selectedDatabase1);
   };
 
   const handleSchemaChange = (e) => {
@@ -293,30 +295,30 @@ const Worksheet = ({ content, onChange }) => {
             {selectedProvider === 'Snowflake' && (
                 <Fragment>
                   <DatabaseProviderDropdown value={selectedDatabase} onChange={handleDatabaseChange}>
-                    <option value="" disabled>Select Database</option>
+                    <option value="" >Select Database</option>
                     {databases.map(database => (
-                      <option key={database.id} value={database.id}>{database.name}</option>
+                      <option key={database.id} value={database.name}>{database.name}</option>
                     ))}
                   </DatabaseProviderDropdown>
         
                   <DatabaseSchemaDropdown value={selectedSchema} onChange={handleSchemaChange}>
-                    <option value="" disabled>Select Schema</option>
-                    {schemas.map(schema => (
-                      <option key={schema.id} value={schema.id}>{schema.name}</option>
-                    ))}
+                    <option value="" >Select Schema</option>
+                    {schemas && schemas.length > 0 && (schemas.map(schema => (
+                      <option key={schema.id} value={schema.name}>{schema.name}</option>
+                    )))}
                   </DatabaseSchemaDropdown>
 
                   <DatabaseSchemaDropdown value={selectedRole} onChange={handleRoleChange}>
-                    <option value="" disabled>Select Role</option>
+                    <option value="" >Select Role</option>
                     {snowflakeLogisticInfo && snowflakeLogisticInfo.roleInfo && snowflakeLogisticInfo.roleInfo.map(role => (
-                      <option key={role.id} value={role.id}>{role.name}</option>
+                      <option key={role.id} value={role.name}>{role.name}</option>
                     ))}
                   </DatabaseSchemaDropdown>
 
                   <DatabaseSchemaDropdown value={selectedWarehouse} onChange={handleWarehouseChange}>
-                    <option value="" disabled>Select Warehouse</option>
+                    <option value="" >Select Warehouse</option>
                     {snowflakeLogisticInfo && snowflakeLogisticInfo.warehouseInfo && snowflakeLogisticInfo.warehouseInfo.map(warehouse => (
-                      <option key={warehouse.id} value={warehouse.id}>{warehouse.name +' - ' + warehouse.size} </option>
+                      <option key={warehouse.id} value={warehouse.name}>{warehouse.name +' - ' + warehouse.size} </option>
                     ))}
                   </DatabaseSchemaDropdown>
                 </Fragment>
