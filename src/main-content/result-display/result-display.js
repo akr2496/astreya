@@ -101,69 +101,45 @@ const ResultWindowComponent = () => {
   };
 
   // Function to download the content of the result window
-  const downloadJSON = () => {
-    // Get the data to be downloaded
-    const data = 'hi there';
-    
-    // Convert the data to JSON string
-    const jsonContent = JSON.stringify(data, null, 2);
-    
-    // Create a Blob object from the JSON content
+const downloadJSON = () => {
+    const jsonContent = JSON.stringify(resultData.rows, null, 2);
     const blob = new Blob([jsonContent], { type: 'application/json' });
-    
-    // Create a temporary anchor element
     const anchorElement = document.createElement('a');
     anchorElement.href = URL.createObjectURL(blob);
-    anchorElement.download = 'result.json'; // Set the filename for the downloaded file
+    anchorElement.download = 'result.json';
     anchorElement.click();
 };
 
 const jsonToCsv = (jsonObject) => {
-    // Parse the JSON object
-    const data = JSON.parse(jsonObject);
+    const csvRows = [];
+    const headers = jsonObject.fields;
+    csvRows.push(headers.join(','));
 
-    // Extract column headers
-    const headers = Object.keys(data[0]);
-
-    // Convert JSON data to array of arrays
-    const csvData = [];
-    csvData.push(headers);
-    data.forEach((row) => {
-        const rowData = [];
-        headers.forEach((header) => {
-            rowData.push(row[header]);
+    jsonObject.rows.forEach((obj) => {
+        const values = headers.map(header => {
+        const value = obj[header];
+        if (typeof value === 'string' && value.includes(',')) {
+            return `"${value}"`;
+        }
+        return value;
         });
-        csvData.push(rowData);
+        csvRows.push(values.join(','));
     });
-
-    // Convert array of arrays to CSV string
-    const csvContent = csvData.map((row) => row.join(',')).join('\n');
-
-    return csvContent;
+    return csvRows.join('\n');
 };
 
 const downloadCSV = () => {
-    // Get the data to be downloaded
-    const data = "hi there";
-    
-    // Convert the data to CSV format
-    const csvContent = jsonToCsv(data);
-    
-    // Create a Blob object from the CSV content
+    const csvContent = jsonToCsv(resultData);
     const blob = new Blob([csvContent], { type: 'text/csv' });
-    
-    // Create a temporary anchor element
     const anchorElement = document.createElement('a');
     anchorElement.href = URL.createObjectURL(blob);
-    anchorElement.download = 'result.csv'; // Set the filename for the downloaded file
+    anchorElement.download = 'result.csv';
     anchorElement.click();
 };
 
-
-  // Function to expand the display window
-  const expandWindow = () => {
+const expandWindow = () => {
     setExpanded(!expanded);
-  };
+};
 
 
   return (
